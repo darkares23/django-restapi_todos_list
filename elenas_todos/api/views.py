@@ -64,10 +64,6 @@ def todoDetail(request, pk):
     todos = Todo.objects.get(id=pk)
     #search_query = request.GET.get('q')
     serializer = TodoSerializer(todos, many=False)
-    """if search_query and todo:
-        todos = todos.filter(
-            Q(description__icontains=search_query)
-        ).distinct()"""
     return Response(serializer.data)
 
 
@@ -96,24 +92,6 @@ def todoDelete(request, pk):
     todo = Todo.objects.get(id=pk)
     todo.delete()
     return Response('Todo succesesfully deleted!')
-
-
-"""
-class TodoList(ListCreateAPIView):
-    def get(self, request, format=None):
-        tasks = []
-        content = {}
-        u_id = str(request.user.id)
-        user_info = Todo.objects.filter(user=u_id)
-        for k in user_info:
-            tasks.append(str(k.__dict__))
-        content[str(request.user.id)] = tasks
-        return Response(content)
-
-    serializer_class = TodoSerializer
-    permission_classes = (UserIsOwnerTodo, IsAuthenticated)
-    authentication_class = (TokenAuthentication, )
-"""
 
 
 class Login(FormView):

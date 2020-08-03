@@ -2,7 +2,7 @@
 Contains the Todos tests class
 
 from django.test import TestCase
-from user.models import User
+from api.models import Todo
 import inspect
 import pep8
 

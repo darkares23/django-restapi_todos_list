@@ -15,5 +15,4 @@ urlpatterns = [
     path('todo_delete/<str:pk>/', views.todoDelete, name='todo_delete'),
     path('todo_create/', views.todoCreate, name='todo_create'),
     path('todo/<int:pk>/delete/', views.DeleteView.as_view(), name='delete'),
-    #path('list/', views.TodoList.as_view(), name='list'),
 ]
