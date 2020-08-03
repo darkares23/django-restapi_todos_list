@@ -42,7 +42,7 @@ def apiOverview(request):
         'create': '/todo_create/',
         'update': '/todo/<str:pk>',
         'delete': 'todo_delete/<str:pk>',
-        'delete': 'search/?search=<str:str>',
+        'search': 'search/?search=<str:str>',
     }
     return Response(api_urls)
 

@@ -139,6 +139,12 @@
 						}
 						//console.log(i);
 						//console.log(i[1].user);
+						var todostatus = ``
+						if (i[1].done == true) {
+							var todostatus = `<span class="done">Done</span>`
+						} else {
+							var todostatus = `<span class="done">In Process</span>`
+						}
 						var item = `
 							<div id="dta-row${i}" class="task-wrapper flex-wrapper">
 								<div style="flex: 7;">
@@ -147,7 +153,7 @@
 									<span class="description">${i[1].description}</span>
 								</div>
 								<div style="flex: 1;">
-									<span class="done"> Done ${i[1].done}</span>
+									${todostatus}
 								</div>
 								<div style="flex: 1;">
 									<button class="btn btn-sm btn-outline-info edit">Edit</span>
