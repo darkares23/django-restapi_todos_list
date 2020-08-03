@@ -76,18 +76,20 @@
 							<input id="title" class="form-control" type="text" name="title" placeholder="Add Task">
 							<input id="description" class="form-control" type="text" name="description"
 								placeholder="Add Task description">
+							<label style="padding-top: 5px;" for="vehicle1"> <input id="doneform" type="checkbox"
+									name="done" value="Task status done?">Status done?</label><br>
 						</div>
+						<div class="mensaje" id="mensaje"></div>
 						<div style="flex: 1;" class="">
 							<input id="submit" class="btn btn-primary" type="submit" value="Create">
 						</div>
 					</div>
-					<div style="padding: 5px;">
-						<input style="padding: 5px; flex: 6;" id="prev" class="btn btn-success" type="submit"
-							value="prev">
-						<input style="padding: 5px; flex: 6;" id="next" class="btn btn-success" type="submit"
-							value="next">
-					</div>
 				</form>
+				<div style="padding: 5px;">
+					<input style="padding: 5px; flex: 6;" id="prev" class="btn btn-success" type="submit" value="prev">
+					<input style="padding: 5px; flex: 6;" id="next" class="btn btn-success next" type="submit"
+						value="next">
+				</div>
 			</div>
 			<div id="list-wrapper">
 
@@ -116,12 +118,12 @@
 		var list;
 		var activeItem = null;
 		var list_snapshot = []
-
-		function buildList() {
+		//var url = 'http://127.0.0.1:8000/api/v1/todo_list/?page=1'
+		function buildList(url = 'http://127.0.0.1:8000/api/v1/todo_list/?page=1') {
 			var wrapper = document.getElementById('list-wrapper');
 			wrapper.innerHTML = '';
 
-			var url = 'http://127.0.0.1:8000/api/v1/todo_list/?page=1'
+			//var url = 'http://127.0.0.1:8000/api/v1/todo_list/?page=1'
 
 			fetch(url)
 				.then((resp) => resp.json())
@@ -130,6 +132,7 @@
 
 					list = data
 					let j = 0
+					console.log(list);
 					for (var i of Object.entries(list['data'])) {
 
 						try {
@@ -141,16 +144,17 @@
 						//console.log(i[1].user);
 						var todostatus = ``
 						if (i[1].done == true) {
-							var todostatus = `<span class="done">Done</span>`
+							var todostatus =
+								`<input type="checkbox" class="done" checked >`
 						} else {
-							var todostatus = `<span class="done">In Process</span>`
+							var todostatus = `<input type="checkbox" class="done">`
 						}
 						var item = `
-							<div id="dta-row${i}" class="task-wrapper flex-wrapper">
+							<div id="dta-row${j}" class="task-wrapper flex-wrapper">
 								<div style="flex: 7;">
-									<span class="userId"><strong>User Id ${i[1].user} | </strong></span>
-									<span class="title"><strong>${i[1].title}</strong></span><br><br/>
-									<span class="description">${i[1].description}</span>
+									<span class="userId" id="userId">${i[1].user}</span>
+									<span class="title" id="title"><strong>${i[1].title}</strong></span><br><br/>
+									<span class="description" id="description">${i[1].description}</span>
 								</div>
 								<div style="flex: 1;">
 									${todostatus}
@@ -165,7 +169,7 @@
 						`
 
 						wrapper.innerHTML += item
-
+						j++;
 					}
 
 					if (list_snapshot.length > list.length) {
@@ -175,49 +179,53 @@
 					}
 
 					list_snapshot = list
-
-					for (var i = 0; i < list.length; i++) {
-						var editBtn = document.getElementsByClassName('edit')[i];
-						var deletetBtn = document.getElementsByClassName('delete')[i];
-						var title = document.getElementsByClassName('title')[i];
+					let k = 0
+					for (var item of Object.entries(list['data'])) {
+						var editBtn = document.getElementsByClassName('edit')[k];
+						var deletetBtn = document.getElementsByClassName('delete')[k];
+						var title = document.getElementsByClassName('title')[k];
 
 						editBtn.addEventListener('click', (function (item) {
 							return function () {
+								console.log(item);
 								editItem(item)
 							}
-						})(list[i]))
+						})(item[1]))
 
 						deletetBtn.addEventListener('click', (function (item) {
 							return function () {
 								deleteItem(item)
 							}
-						})(list[i]))
+						})(item[1]))
 
 						title.addEventListener('click', (function (item) {
 							return function () {
 								strikeUnstrike(item)
 							}
-						})(list[i]))
+						})(item[1]))
+						k++;
 					}
 
 				})
 		}
 
 		var form = document.getElementById('form-wrapper')
-		var title = document.getElementById('title').value
-		var description = document.getElementById('description').value
+
 		form.addEventListener('submit', function (e) {
 			e.preventDefault();
+
 			var title = document.getElementById('title').value
 			var description = document.getElementById('description').value
-			console.log('form submitted');
-			console.log('this', list.title);
-			console.log('title', title);
+			var userid = document.getElementById('userId').value
+			var done = document.getElementById('doneform').value
+
+			console.log(userid);
 			var url = 'http://127.0.0.1:8000/api/v1/todo_create/';
 
 			if (activeItem != null) {
 				var url = `http://127.0.0.1:8000/api/v1/todo_update/${activeItem.id}/`
-				activeItem = null
+				console.log(url);
+				var activeItem = null
 			}
 
 			fetch(url, {
@@ -227,29 +235,51 @@
 					'X-CSRFToken': csrftoken,
 				},
 				body: JSON.stringify({
-					"id": "",
+					"user": '1',
 					"title": title,
 					"description": description,
 					"done": false,
-					"user": 1,
 				})
 			}).then(function (response) {
-				location.reload();
+				//location.reload();
 				document.getElementById('form').reset();
 			})
 		})
+		var nextBtn = document.getElementById('next');
+		nextBtn.addEventListener('click', ((e) => {
+			e.preventDefault();
+			next()
+		}))
+
+		var prevBtn = document.getElementById('prev');
+		nextBtn.addEventListener('click', ((e) => {
+			e.preventDefault();
+			prev()
+		}))
+
+
+		function next() {
+			let url = `http://127.0.0.1:8000/api/v1/todo_list/?page=2/`
+			buildList(url)
+		}
+
+		function prev() {
+			let url = `http://127.0.0.1:8000/api/v1/todo_list/?page=1/`
+			buildList(url)
+		}
 
 		function editItem(item) {
 			console.log('Item clicked:', item);
-			activeItem = item;
+			activeItem = item
+			var url = `http://127.0.0.1:8000/api/v1/todo_update/${activeItem.id}/`
 			document.getElementById('title').value = activeItem.title;
 			document.getElementById('description').value = activeItem.description;
 		}
 
 		function deleteItem(item) {
 			console.log('Item delete clicked:', item);
-			console.log(activeItem.id);
-			fetch(`http://127.0.0.1:8000/api/v1/todo_delete/${item.id}/`, {
+			activeItem = item;
+			fetch(`http://127.0.0.1:8000/api/v1/todo_delete/${activeItem.id}/`, {
 				method: 'DELETE',
 				headers: {
 					'Content-type': 'application/json',
@@ -279,6 +309,20 @@
 			}).then((response) => {
 				buildList()
 			})
+		}
+		function showMsj(msj="Fill all fields", clases="msj") {
+			const div = document.createElement('div');
+			div.className = clases;
+			div.appendChild(document.createTextNode(msj));
+
+			//select mesj and show content
+			const divMsj = document.querySelector('.mensaje');
+			divMsj.appendChild(div);
+
+			// Delete alert
+			setTimeout(() => {
+				document.querySelector('.mensajes div').remove();
+			}, 2000);
 		}
 	</script>
 </body>

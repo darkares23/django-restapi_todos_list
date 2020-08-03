@@ -55,6 +55,16 @@ http://127.0.0.1:8000/api/v1/delete/<pk:id>
 ```
 http://127.0.0.1:8000/api/v1/todo_list/
 ```
+```
+http://127.0.0.1:8000/api/v1/search/?search=<str>
+```
+```
+http://127.0.0.1:8000/api/v1/search/?search=<str:str>
+```
+```
+http://127.0.0.1:8000/api/v1/todo_list/?page=<int:int>'
+```
+
 ## testing ⚙️
 
 ```

@@ -8,7 +8,6 @@ Contains the Todos tests class
 from django.test import TestCase
 from .models import Todo
 import inspect
-import pep8
 import unittest
 
 

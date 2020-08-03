@@ -63,7 +63,7 @@ def todoList(request):
     nextPage = 1
     previousPage = 1
     page = request.GET.get('page', 1)
-    paginator = Paginator(todos, 4)
+    paginator = Paginator(todos, 11)
     try:
         data = paginator.page(page)
     except PageNotAnInteger:
