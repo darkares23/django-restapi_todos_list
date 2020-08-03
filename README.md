@@ -19,7 +19,9 @@ pip install -r requeriments.txt
 
 
 LOGIN URL
-`http://127.0.0.1:8000/login`
+```
+http://127.0.0.1:8000/login
+```
 super user: juan
 passw : elena1234
 
@@ -55,7 +57,9 @@ http://127.0.0.1:8000/api/v1/todo_list/
 ```
 ## testing ⚙️
 
--
+```
+python3 manage.py test
+```
 
 ## Author ✒️
 
