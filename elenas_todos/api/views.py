@@ -21,19 +21,16 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.decorators import api_view
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from rest_framework.pagination import PageNumberPagination
 from .serializer import TodoSerializer
 from .models import Todo
 from .permissions import UserIsOwnerTodo
-
-
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-# specific to this view
 from django.views.generic.edit import DeleteView
 from django.urls import reverse_lazy
-# specific to this view
 from django.views.generic import ListView, TemplateView
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+
 
 
 @api_view(['GET'])
