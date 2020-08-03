@@ -20,10 +20,18 @@ pip install -r requeriments.txt
 
 LOGIN URL
 `http://127.0.0.1:8000/login`
+super user: juan
+passw : elena1234
+
+user: testsimple
+pass: elena1234
 
 FRONTEND URL TODOLIST MANIPULATION
 # After logged only for already created users
 `http://127.0.0.1:8000/`
+
+ADMIN URL
+`http://127.0.0.1:8000/admin/api/todo/`
 
 ENDPOINTS
 `http://127.0.0.1:8000/api/v1/todo_list/`
