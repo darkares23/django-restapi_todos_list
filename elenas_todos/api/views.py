@@ -22,15 +22,15 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.decorators import api_view
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from rest_framework.pagination import PageNumberPagination
-from .serializer import TodoSerializer
-from .models import Todo
-from .permissions import UserIsOwnerTodo
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import DeleteView
-from django.urls import reverse_lazy
-from django.views.generic import ListView, TemplateView
-
+from rest_framework import status
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from rest_framework import filters
+from .permissions import UserIsOwnerTodo
+from .serializer import TodoSerializer
+from .models import Todo
 
 
 @api_view(['GET'])
@@ -42,8 +42,16 @@ def apiOverview(request):
         'create': '/todo_create/',
         'update': '/todo/<str:pk>',
         'delete': 'todo_delete/<str:pk>',
+        'delete': 'search/?search=<str:str>',
     }
     return Response(api_urls)
+
+
+class QuestionsAPIView(generics.ListCreateAPIView):
+    search_fields = ['description']
+    filter_backends = (filters.SearchFilter,)
+    queryset = Todo.objects.all()
+    serializer_class = TodoSerializer
 
 
 @api_view(['GET'])
@@ -51,8 +59,26 @@ def todoList(request):
     """Gets a list of the users todos"""
     u_id = str(request.user.id)
     todos = Todo.objects.filter(user=u_id)
-    serializer = TodoSerializer(todos, many=True)
-    return Response(serializer.data)
+    data = []
+    nextPage = 1
+    previousPage = 1
+    page = request.GET.get('page', 1)
+    paginator = Paginator(todos, 4)
+    try:
+        data = paginator.page(page)
+    except PageNotAnInteger:
+        data = paginator.page(1)
+    except EmptyPage:
+        data = paginator.page(paginator.num_pages)
+
+    serializer = TodoSerializer(
+        data, context={'request': request}, many=True)
+    if data.has_next():
+        nextPage = data.next_page_number()
+    if data.has_previous():
+        previousPage = data.previous_page_number()
+
+    return Response({'data': serializer.data, 'count': paginator.count, 'numpages': paginator.num_pages, 'nextlink': '/api/todo_list/?page=' + str(nextPage), 'prevlink': '/api/todo_list/?page=' + str(previousPage)})
 
 
 @api_view(['GET'])

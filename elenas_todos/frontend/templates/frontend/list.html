@@ -81,6 +81,12 @@
 							<input id="submit" class="btn btn-primary" type="submit" value="Create">
 						</div>
 					</div>
+					<div style="padding: 5px;">
+						<input style="padding: 5px; flex: 6;" id="prev" class="btn btn-success" type="submit"
+							value="prev">
+						<input style="padding: 5px; flex: 6;" id="next" class="btn btn-success" type="submit"
+							value="next">
+					</div>
 				</form>
 			</div>
 			<div id="list-wrapper">
@@ -115,30 +121,33 @@
 			var wrapper = document.getElementById('list-wrapper');
 			wrapper.innerHTML = '';
 
-			var url = 'http://127.0.0.1:8000/api/v1/todo_list/'
+			var url = 'http://127.0.0.1:8000/api/v1/todo_list/?page=1'
 
 			fetch(url)
 				.then((resp) => resp.json())
 				.then(function (data) {
-					console.log(data);
+					//console.log(data);
 
 					list = data
-					for (var i in list) {
+					let j = 0
+					for (var i of Object.entries(list['data'])) {
 
 						try {
 							document.getElementById(`data-row-${i}`).remove()
 						} catch (err) {
 
 						}
-
+						//console.log(i);
+						//console.log(i[1].user);
 						var item = `
 							<div id="dta-row${i}" class="task-wrapper flex-wrapper">
 								<div style="flex: 7;">
-									<span class="title"><strong>${list[i].title}</strong></span><br><br/>
-									<span class="description">${list[i].description}</span>
+									<span class="userId"><strong>User Id ${i[1].user} | </strong></span>
+									<span class="title"><strong>${i[1].title}</strong></span><br><br/>
+									<span class="description">${i[1].description}</span>
 								</div>
 								<div style="flex: 1;">
-									<span class="done"> Done ${list[i].done}</span>
+									<span class="done"> Done ${i[1].done}</span>
 								</div>
 								<div style="flex: 1;">
 									<button class="btn btn-sm btn-outline-info edit">Edit</span>
@@ -148,7 +157,9 @@
 								</div>
 							</div>
 						`
+
 						wrapper.innerHTML += item
+
 					}
 
 					if (list_snapshot.length > list.length) {
